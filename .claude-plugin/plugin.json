@@ -1,0 +1,6 @@
+{
+  "name": "ralph-loop",
+  "description": "Set up, check on and tune a Ralph loop: fresh Claude context per iteration, one plan item per run, guarded by hooks and a test gate.",
+  "author": { "name": "radeshgovind-2005" },
+  "keywords": ["ralph", "agent-loop", "autonomous", "specs", "hooks"]
+}

@@ -1,0 +1,14 @@
+{
+  "name": "ralph-loop",
+  "owner": { "name": "radeshgovind-2005" },
+  "metadata": { "description": "The ralph-loop skill: brainstorm into specs, install a guarded Ralph loop, check on it, tune it." },
+  "plugins": [
+    {
+      "name": "ralph-loop",
+      "source": "./",
+      "description": "Interview to specs, install a Ralph loop with a guard hook and test gate, then status and tuning.",
+      "category": "productivity",
+      "keywords": ["ralph", "agent-loop", "autonomous"]
+    }
+  ]
+}

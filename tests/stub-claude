@@ -1,0 +1,19 @@
+#!/bin/bash
+# Fake `claude` for the loop tests. Behaviour comes from STUB_MODE.
+printf '%s\n' "$@" > .ralph/state/last-args
+head -1 > .ralph/state/last-stdin
+printf 'RALPH_MODE=%s\nRALPH_CHECK=%s\nRALPH_GATE_MAX=%s\n' "$RALPH_MODE" "$RALPH_CHECK" "$RALPH_GATE_MAX" > .ralph/state/last-env
+tick() {
+  awk 'd==0 && /^[[:space:]]*- \[ \]/ {sub(/- \[ \]/,"- [x]"); d=1} {print}' IMPLEMENTATION_PLAN.md > p.tmp && mv p.tmp IMPLEMENTATION_PLAN.md
+}
+case "${STUB_MODE:-tick}" in
+  tick)  tick; git add -A >/dev/null; git commit -qm tick; echo "ticked one" ;;
+  noop)  echo "did nothing" ;;
+  stop)  echo "need credentials" > .ralph/STOP ;;
+  fail)  echo "boom" >&2; exit 7 ;;
+  break) tick; touch BROKEN; git add -A >/dev/null; git commit -qm "tick but break"; echo "broke it" ;;
+  breakonce)  # first run breaks the build; later runs fix it when told, else tick
+    if [ -f .ralph/CHECK_FAILED ]; then rm -f BROKEN; git add -A >/dev/null; git commit -qm fix; echo fixed
+    elif [ ! -f .ralph/state/broke ]; then touch .ralph/state/broke BROKEN; tick; git add -A >/dev/null; git commit -qm "tick but break"
+    else tick; git add -A >/dev/null; git commit -qm tick; fi ;;
+esac

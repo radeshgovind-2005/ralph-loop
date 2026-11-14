@@ -1,0 +1,14 @@
+# Ralph loop config. Read by loop.sh; env vars of the same name override it.
+# One KEY="value" per line. setup writes the detected values; after that this file is yours.
+
+# The command that proves the work. Run after every iteration and by the stop gate.
+RALPH_CHECK=""
+
+# Comma-separated tools the agent may use without asking. Include your build and test commands.
+RALPH_ALLOWED_TOOLS="Bash(git *),Bash(ls *),Bash(mkdir *)"
+
+# Model for the loop. Empty = the CLI default.
+RALPH_MODEL=""
+
+# Per-iteration spend cap in USD. Empty = none.
+RALPH_BUDGET_USD="5"
