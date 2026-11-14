@@ -9,7 +9,10 @@ from pathlib import Path
 
 RALPH = Path(__file__).resolve().parent.parent / "skills" / "ralph-loop" / "scripts" / "ralph.py"
 passed = failed = 0
-GIT_ENV = dict(os.environ, GIT_AUTHOR_NAME="t", GIT_AUTHOR_EMAIL="t@t", GIT_COMMITTER_NAME="t", GIT_COMMITTER_EMAIL="t@t")
+STUB_CLAUDE = Path(__file__).resolve().parent / "stub-claude"
+# CLAUDE_BIN points doctor at the fake claude, so the tests don't need the real CLI (CI has none).
+GIT_ENV = dict(os.environ, GIT_AUTHOR_NAME="t", GIT_AUTHOR_EMAIL="t@t", GIT_COMMITTER_NAME="t", GIT_COMMITTER_EMAIL="t@t",
+               CLAUDE_BIN=str(STUB_CLAUDE))
 
 
 def expect(name, cond, detail=""):
@@ -117,6 +120,8 @@ ralph(t, "apply", "--check", "true")
 r = ralph(t, "doctor")
 expect("doctor passes on good setup", r.returncode == 0 and "0 fail" in r.stdout, r.stdout)
 expect("doctor proves guard", "PASS guard blocks a spec edit" in r.stdout, r.stdout)
+r = ralph(t, "doctor", env=dict(GIT_ENV, CLAUDE_BIN="definitely-not-claude-xyz"))
+expect("doctor fails without claude CLI", r.returncode == 1 and "FAIL definitely-not-claude-xyz on PATH" in r.stdout, r.stdout)
 t = proj()
 ralph(t, "apply", "--check", "")
 r = ralph(t, "doctor")
